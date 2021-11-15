@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29509.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eurotestament", "Eurotestament\Eurotestament.csproj", "{89787BED-3B02-4DCB-B22F-84EEE5284081}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8974D841-005E-461F-988A-C780E22AA880}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{89787BED-3B02-4DCB-B22F-84EEE5284081}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89787BED-3B02-4DCB-B22F-84EEE5284081}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89787BED-3B02-4DCB-B22F-84EEE5284081}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89787BED-3B02-4DCB-B22F-84EEE5284081}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6F4C5641-2902-4D95-8B98-3E3BA2504AC8}
+	EndGlobalSection
+EndGlobal
