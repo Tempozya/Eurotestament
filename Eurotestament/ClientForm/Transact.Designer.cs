@@ -35,7 +35,6 @@ namespace Eurotestament
             this.TxtSum = new Eurotestament.DesignControls.TextBoxControl();
             this.TxtRecepientNum = new Eurotestament.DesignControls.TextBoxControl();
             this.but_transaction = new Eurotestament.DesignControls.ButtonControl();
-            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label4
@@ -145,22 +144,12 @@ namespace Eurotestament
             this.but_transaction.UseVisualStyleBackColor = false;
             this.but_transaction.Click += new System.EventHandler(this.but_transaction_Click);
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(487, 106);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(35, 13);
-            this.label1.TabIndex = 19;
-            this.label1.Text = "label1";
-            // 
             // Transact
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(41)))), ((int)(((byte)(53)))), ((int)(((byte)(65)))));
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.but_transaction);
             this.Controls.Add(this.check_box);
             this.Controls.Add(this.TxtSum);
@@ -182,6 +171,5 @@ namespace Eurotestament
         private DesignControls.TextBoxControl TxtSum;
         private DesignControls.ComBoxControl check_box;
         private DesignControls.ButtonControl but_transaction;
-        private System.Windows.Forms.Label label1;
     }
 }

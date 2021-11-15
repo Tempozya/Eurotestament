@@ -58,13 +58,9 @@ namespace Eurotestament
             var index = check_box.SelectedIndex;
             var culture = new CultureInfo("ge-GE");
             txtBalance.Text = Convert.ToDouble(checks.BalanceCheck[index]).ToString("C");
-            label1.Text = "Комисиия равна";
+
             
         }
 
-        private void viewer()
-        {
-            Console.WriteLine("Transaction");
-        }
     }
 }
