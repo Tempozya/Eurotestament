@@ -33,7 +33,7 @@ namespace Eurotestament
     
             if (Tran.transfer(check_box.SelectedItem.ToString(), TxtRecepientNum.Texts, TxtSum.Texts, checks.CurrencyCheck[check_box.SelectedIndex]))
             {
-                MessageBox.Show("Перевод выполнен" );
+                MessageBox.Show("Переведено");
                 checks.update(account.Id);
                 txtBalance.Text = checks.BalanceCheck[check_box.SelectedIndex] + " " + checks.CurrencyCheck[check_box.SelectedIndex];
             }
