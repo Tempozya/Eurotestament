@@ -56,7 +56,7 @@ namespace Eurotestament
         private void check_box_SelectedIndexChanged(object sender, EventArgs e)
         {
             var index = check_box.SelectedIndex;
-            var culture = new CultureInfo("ru-RU");
+            var culture = new CultureInfo("ge-GE");
             txtBalance.Text = Convert.ToDouble(checks.BalanceCheck[index]).ToString("C");
             label1.Text = "Комисиия равна";
             
