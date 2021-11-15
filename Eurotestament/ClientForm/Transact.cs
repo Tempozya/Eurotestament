@@ -64,7 +64,7 @@ namespace Eurotestament
 
         private void viewer()
         {
-            MessageBox.Show("Transaction");
+            Console.WriteLine("Transaction");
         }
     }
 }
