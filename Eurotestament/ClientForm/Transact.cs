@@ -56,7 +56,7 @@ namespace Eurotestament
             var index = check_box.SelectedIndex;
             var culture = new CultureInfo("ru-RU");
             txtBalance.Text = Convert.ToDouble(checks.BalanceCheck[index]).ToString("C");
-            
+       
         }
 
     }
