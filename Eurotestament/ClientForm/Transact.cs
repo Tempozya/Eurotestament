@@ -47,6 +47,8 @@ namespace Eurotestament
 
             for (int i=0;i<checks.NumCheck.Count;i++)
             {
+               
+                
                 check_box.Items.Add(checks.NumCheck[i]);
             }
         }
