@@ -36,15 +36,13 @@ namespace Eurotestament
                 MessageBox.Show("Перевод выполнен" );
                 checks.update(account.Id);
                 txtBalance.Text = checks.BalanceCheck[check_box.SelectedIndex] + " " + checks.CurrencyCheck[check_box.SelectedIndex];
-
             }
-                
-                
-           
+
 
         }
 
         private void Transact_Load(object sender, EventArgs e)
+
         {
 
             for (int i=0;i<checks.NumCheck.Count;i++)
@@ -57,7 +55,7 @@ namespace Eurotestament
         {
             var index = check_box.SelectedIndex;
             var culture = new CultureInfo("ru-RU");
-            txtBalance.Text = Convert.ToDouble(checks.BalanceCheck[index]).ToString("C") + " " + checks.CurrencyCheck[index];
+            txtBalance.Text = Convert.ToDouble(checks.BalanceCheck[index]).ToString("C");
             
         }
 
