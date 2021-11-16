@@ -156,10 +156,10 @@
       <DependentUpon>Transact.cs</DependentUpon>
     </Compile>
     <Compile Include="Transaction.cs" />
-    <Compile Include="Forms\ClientProfile.cs">
+    <Compile Include="ClientForm\ClientProfile.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\ClientProfile.Designer.cs">
+    <Compile Include="ClientForm\ClientProfile.Designer.cs">
       <DependentUpon>ClientProfile.cs</DependentUpon>
     </Compile>
     <Compile Include="AdminForm\Clients.cs">
@@ -222,7 +222,7 @@
     <EmbeddedResource Include="DesignControls\TextBoxControl.resx">
       <DependentUpon>TextBoxControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\ClientProfile.resx">
+    <EmbeddedResource Include="ClientForm\ClientProfile.resx">
       <DependentUpon>ClientProfile.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="AdminForm\Clients.resx">

@@ -39,6 +39,7 @@ namespace Eurotestament.ClientForm
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Name = "ClientChecks";
             this.Text = "Счета";
+            this.Load += new System.EventHandler(this.ClientChecks_Load);
             this.ResumeLayout(false);
 
         }

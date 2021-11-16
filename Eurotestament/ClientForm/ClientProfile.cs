@@ -186,7 +186,7 @@ namespace Eurotestament
 
         private void btnChecks_Click(object sender, EventArgs e)
         {
-            OpenChildForm(new ClientForm.ClientChecks(), sender);
+            OpenChildForm(new ClientForm.ClientChecks(account, checks), sender);
         }
 
         private void btnTrans_Click(object sender, EventArgs e)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,8 +12,11 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 
+
+
 namespace Eurotestament
 {
+ 
     public partial class Transact : Form
     {
         SQLFunctions sqlfunc = new SQLFunctions();
@@ -56,8 +60,9 @@ namespace Eurotestament
         private void check_box_SelectedIndexChanged(object sender, EventArgs e)
         {
             var index = check_box.SelectedIndex;
-            var culture = new CultureInfo("ge-GE");
+
             txtBalance.Text = Convert.ToDouble(checks.BalanceCheck[index]).ToString("C");
+           
 
             
         }
