@@ -569,7 +569,53 @@ namespace Eurotestament
 
         }
 
-        
+        public List<string[]> HistoryGet(string NumCheck)
+        {
+            List<string[]> data = new List<string[]>();
+            string sql = String.Format("SELECT UserNumCheck,Sum_enrollment,Sum_enrollment_currency,date_transaction FROM transaction WHERE RecipientNumCheck = @NumCheck ");
+            MySqlCommand command = new MySqlCommand(sql, conn);
+            command.Parameters.Add("@NumCheck", MySqlDbType.VarChar).Value = NumCheck;
+            conn.Open();
+            MySqlDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                data.Add(new string[4]);
+
+                data[data.Count - 1][0] = reader[0].ToString();
+                data[data.Count - 1][1] = reader[1].ToString();
+                data[data.Count - 1][2] = reader[2].ToString();
+                data[data.Count - 1][3] = reader[3].ToString();
+
+            }
+            conn.Close();
+            return data;
+
+        }
+
+        public List<string[]> HistoryTake(string NumCheck)
+        {
+            List<string[]> data = new List<string[]>();
+            string sql = String.Format("SELECT RecipientNumCheck,Sum_transaction,Sum_transaction_currency,date_transaction FROM transaction WHERE UserNumCheck = @NumCheck ");
+            MySqlCommand command = new MySqlCommand(sql, conn);
+            command.Parameters.Add("@NumCheck", MySqlDbType.VarChar).Value = NumCheck;
+            conn.Open();
+            MySqlDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                data.Add(new string[4]);
+
+                data[data.Count - 1][0] = reader[0].ToString();
+                data[data.Count - 1][1] = reader[1].ToString();
+                data[data.Count - 1][2] = reader[2].ToString();
+                data[data.Count - 1][3] = reader[3].ToString();
+
+            }
+            conn.Close();
+            return data;
+
+        }
+
+
 
 
 

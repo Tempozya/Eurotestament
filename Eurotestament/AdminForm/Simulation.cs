@@ -22,6 +22,7 @@ namespace Eurotestament
         Check chData = new Check();
         User usData = new User();
         Dictionary<string, Double> currency = new Dictionary<string, Double>();
+        string checkedRB;
 
         private bool _working;
         private int _counter;
@@ -60,9 +61,8 @@ namespace Eurotestament
 
         }
 
-        private void transaction(object arg)
+        private void transaction()
         {
-            IProgress<int> progress = (IProgress<int>)arg;
             string UserNum;
             string RecipientNum;
             string SumWriteOff;
@@ -106,14 +106,13 @@ namespace Eurotestament
 
                 //sqlfunc.MoneyTransfer(UserNum, RecipientNum, SumWriteOff, SumWriteOff, uCurrency, rCurrency, rBank);
                 Thread.Sleep(1000);
-                progress.Report(_counter++);
+
             }
         }
 
 
-        private void registration(object arg)
+        private void registration()
         {
-            IProgress<int> progress = (IProgress<int>)arg;
             string[] checkForm = { "Зарплатный", "Валютный", "Накопительный" };
             string checkCurrencyRub = "RUB";
             string[] checkCurrencyVal = { "USD", "EUR" };
@@ -159,13 +158,14 @@ namespace Eurotestament
 
                 Thread.Sleep(1000);
                 
-                progress.Report(_counter++);
+                
             } 
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Start();   
+           
+            Start(checkedRB);   
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -173,18 +173,27 @@ namespace Eurotestament
             Stop();
         }
 
-
-
-
-        private void Start()
+        private void AllStart(object arg)
         {
+            IProgress<int> progress = (IProgress<int>)arg;
+            transaction();
+            registration();
+            progress.Report(_counter++);
+        }
+
+
+        private void Start(string state)
+        {
+
             if (_working)
             {
                 label2.Text = "Поток уже работает!";
                 return;
             }
 
-            Thread t = new Thread(transaction) { IsBackground = true };
+
+            Thread t = new Thread(AllStart) { IsBackground = true };
+
 
             IProgress<int> progress = new Progress<int>((i) => label1.Text = $"Counter: {i}");
 
@@ -206,6 +215,27 @@ namespace Eurotestament
             _working = false;
 
             label2.Text = "Поток не работает!";
+        }
+
+        private void rbReg_CheckedChanged(object sender, EventArgs e)
+        {
+            checkedRB = rbReg.Name;
+            button1.Enabled = true;
+            button2.Enabled = true; 
+        }
+
+        private void rbTrans_CheckedChanged(object sender, EventArgs e)
+        {
+            checkedRB = rbTrans.Name;
+            button1.Enabled = true;
+            button2.Enabled = true;
+        }
+
+        private void rbAll_CheckedChanged(object sender, EventArgs e)
+        {
+            checkedRB = rbAll.Name;
+            button1.Enabled = true;
+            button2.Enabled = true;
         }
     }
 }

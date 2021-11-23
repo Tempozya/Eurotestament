@@ -181,7 +181,7 @@ namespace Eurotestament
 
         private void btnTransactHistory_Click(object sender, EventArgs e)
         {
-            OpenChildForm(new ClientForm.TransactionHistory(), sender);
+            OpenChildForm(new ClientForm.TransactionHistory(account, checks), sender);
         }
 
         private void btnChecks_Click(object sender, EventArgs e)
