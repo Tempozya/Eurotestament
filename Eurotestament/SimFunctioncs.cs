@@ -24,8 +24,9 @@ namespace Eurotestament
             .RuleFor(u => u.CheckNum, f => f.Finance.Account(15))
             .RuleFor(u => u.Form, f => f.Random.Number(2))
             .RuleFor(u => u.Balance, f => f.Random.Number(100000))
-            .RuleFor(u => u.Currency, f => f.Random.Number(2))
+            .RuleFor(u => u.Currency, f => f.Random.Number(1))
             .FinishWith((f, u) => { });
+
 
 
             return CheckData;

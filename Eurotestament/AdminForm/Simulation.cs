@@ -23,9 +23,11 @@ namespace Eurotestament
         User usData = new User();
         Dictionary<string, Double> currency = new Dictionary<string, Double>();
         string checkedRB;
+        private DateTime date = new DateTime(2021, 11, 1);
+        private  int countTrans = 0;
+        private int countReg = 0;
 
         private bool _working;
-        private int _counter;
         public simulation()
         {
             InitializeComponent();
@@ -61,7 +63,10 @@ namespace Eurotestament
 
         }
 
-        private void transaction()
+
+
+
+        private  void transaction()
         {
             string UserNum;
             string RecipientNum;
@@ -92,7 +97,7 @@ namespace Eurotestament
 
                 if (uCurrency == rCurrency)
                 {
-                    sqlfunc.MoneyTransfer(UserNum, RecipientNum, SumWriteOff, SumWriteOff, uCurrency, rCurrency, rBank);
+                     sqlfunc.MoneyTransfer(UserNum, RecipientNum, SumWriteOff, SumWriteOff, uCurrency, rCurrency, rBank);
                         
                 }
                 else
@@ -102,16 +107,16 @@ namespace Eurotestament
 
                 }
 
-
+                countTrans += 1; ;
 
                 //sqlfunc.MoneyTransfer(UserNum, RecipientNum, SumWriteOff, SumWriteOff, uCurrency, rCurrency, rBank);
-                Thread.Sleep(1000);
+                Thread.Sleep(10);
 
             }
         }
 
 
-        private void registration()
+        private  void registration()
         {
             string[] checkForm = { "Зарплатный", "Валютный", "Накопительный" };
             string checkCurrencyRub = "RUB";
@@ -155,9 +160,10 @@ namespace Eurotestament
 
                 sqlfunc.RegUser(usData.Id, usData.Login, usData.Password, usData.FirstName, usData.LastName, usData.PhoneNum);
                 sqlfunc.RegUserCheck(checkNum, form, balance, currency, usData.Id);
+                countReg += 1;
+                Console.WriteLine("Проход");
+                Thread.Sleep(10);
 
-                Thread.Sleep(1000);
-                
                 
             } 
         }
@@ -173,48 +179,70 @@ namespace Eurotestament
             Stop();
         }
 
-        private void AllStart(object arg)
+
+        private void SimLoop()
         {
-            IProgress<int> progress = (IProgress<int>)arg;
-            transaction();
-            registration();
-            progress.Report(_counter++);
+            while (_working)
+            {
+                if(date.DayOfWeek == DayOfWeek.Monday)
+                {
+
+                }
+                label1.Invoke(new Action(() => label1.Text = date.ToString() + " Новыйх пользователей- " + countReg.ToString() + "Транзакций- " + countTrans.ToString()));
+                
+                date = date.AddDays(1);
+                Thread.Sleep(1000);
+
+            }
         }
 
-
-        private void Start(string state)
+        private  void Start(string state)
         {
 
             if (_working)
             {
-                label2.Text = "Поток уже работает!";
+                label2.Text = "Симуляция уже работает!";
                 return;
             }
 
+            
+            if (state == "rbReg")
+            {
+                Task.Run(() => SimLoop());
+                Task.Run(() => registration());
+            }
+                
+            else if (state == "rbTrans")
+            {
+                Task.Run(() => SimLoop());
+                Task.Run(() => transaction());
+            }
+                
 
-            Thread t = new Thread(AllStart) { IsBackground = true };
 
 
-            IProgress<int> progress = new Progress<int>((i) => label1.Text = $"Counter: {i}");
+
+
+            //await Task.Run(() => transaction());
 
             _working = true;
 
-            label2.Text = "Поток работает!";
+            label2.Text = "Симуляция запущена";
 
-            t.Start(progress);
+
         }
 
         private void Stop()
         {
             if (!_working)
             {
-                label2.Text = "Поток уже не работает!";
+                label2.Text = "Симуляция уже не работает!";
                 return;
             }
 
             _working = false;
 
-            label2.Text = "Поток не работает!";
+            label2.Text = "Симуляция не работает!";
         }
 
         private void rbReg_CheckedChanged(object sender, EventArgs e)
@@ -231,11 +259,6 @@ namespace Eurotestament
             button2.Enabled = true;
         }
 
-        private void rbAll_CheckedChanged(object sender, EventArgs e)
-        {
-            checkedRB = rbAll.Name;
-            button1.Enabled = true;
-            button2.Enabled = true;
-        }
+
     }
 }

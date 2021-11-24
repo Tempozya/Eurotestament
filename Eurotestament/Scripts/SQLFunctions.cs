@@ -100,7 +100,7 @@ namespace Eurotestament
             return flag;
         }
 
-        public bool RegUser(string id,string login, string password, string name, string surname, string phone)
+        public bool RegUser(string id, string login, string password, string name, string surname, string phone)
         {
             bool flag = false;
 
