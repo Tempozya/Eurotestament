@@ -1,18 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Bogus;
-using Bogus.DataSets;
-using Bogus.Extensions;
-using Newtonsoft.Json;
 using System.Threading;
+using Eurotestament.AdminForm;
 
 namespace Eurotestament
 {
@@ -21,13 +15,17 @@ namespace Eurotestament
         SQLFunctions sqlfunc = new SQLFunctions();
         Check chData = new Check();
         User usData = new User();
+        Settings settings = new Settings();
+
+
         Dictionary<string, Double> currency = new Dictionary<string, Double>();
         string checkedRB;
         private DateTime date = new DateTime(2021, 11, 1);
         private  int countTrans = 0;
         private int countReg = 0;
-
+        private double AllTransact = 0;
         private bool _working;
+
         public simulation()
         {
             InitializeComponent();
@@ -75,43 +73,55 @@ namespace Eurotestament
             string rCurrency;
             string rBank;
             DataTable data = new DataTable();
-            data = sqlfunc.AllChecksSimulat();
+            
             while (_working)
             {
-                data = sqlfunc.AllChecksSimulat();
-                var random = new Randomizer();
-                var rndU = random.Number(data.Rows.Count-1);
-                var rndR = random.Number(data.Rows.Count-1);
-
-
-                UserNum = data.Rows[rndU][1].ToString();
-                if (rndU == rndR)
-                    rndR = random.Number(data.Rows.Count-1);
-                RecipientNum = data.Rows[rndR][1].ToString();
-
-                SumWriteOff = random.Number(Convert.ToInt32(data.Rows[rndU][3])).ToString();
-                uCurrency = data.Rows[rndU][4].ToString();
-                rCurrency = data.Rows[rndR][4].ToString();
-                rBank = data.Rows[rndR][6].ToString();
-
-
-                if (uCurrency == rCurrency)
+                for (int i = 0; i < settings.MaxNewTransaction; i++)
                 {
-                     sqlfunc.MoneyTransfer(UserNum, RecipientNum, SumWriteOff, SumWriteOff, uCurrency, rCurrency, rBank);
+
+                    data = sqlfunc.AllChecksSimulat();
+                    Console.WriteLine(data.Rows.Count);
+                    var random = new Randomizer();
+                    var rndU = random.Number(data.Rows.Count-1);
+                    var rndR = random.Number(data.Rows.Count-1);
+
+
+                    UserNum = data.Rows[rndU][1].ToString();
+                    if (rndU == rndR)
+                        rndR = random.Number(data.Rows.Count-1);
+                    RecipientNum = data.Rows[rndR][1].ToString();
+
+                    SumWriteOff = random.Number(Convert.ToInt32(data.Rows[rndU][3])).ToString();
+                    uCurrency = data.Rows[rndU][4].ToString();
+                    rCurrency = data.Rows[rndR][4].ToString();
+                    rBank = data.Rows[rndR][6].ToString();
+
+
+                    if (uCurrency == rCurrency)
+                    {
+                         sqlfunc.MoneyTransfer(UserNum, RecipientNum, SumWriteOff, SumWriteOff, uCurrency, rCurrency, rBank);
                         
-                }
-                else
-                {
-                    sqlfunc.MoneyTransfer(UserNum, RecipientNum, SumWriteOff, Converter(uCurrency, rCurrency, SumWriteOff), uCurrency, rCurrency, rBank);
+                    }
+                    else
+                    {
+                        sqlfunc.MoneyTransfer(UserNum, RecipientNum, SumWriteOff, Converter(uCurrency, rCurrency, SumWriteOff), uCurrency, rCurrency, rBank);
                     
 
+                    }
+
+                    if (uCurrency == "RUB")
+                        AllTransact += Convert.ToDouble(SumWriteOff);
+                    else              
+                        AllTransact += Convert.ToDouble(Converter(uCurrency, "RUB", SumWriteOff));
+                    
+                        
+
+
+                    countTrans += 1;
+
+                
+                    Thread.Sleep(settings.DayInterval/settings.MaxNewTransaction);
                 }
-
-                countTrans += 1; ;
-
-                //sqlfunc.MoneyTransfer(UserNum, RecipientNum, SumWriteOff, SumWriteOff, uCurrency, rCurrency, rBank);
-                Thread.Sleep(10);
-
             }
         }
 
@@ -128,56 +138,49 @@ namespace Eurotestament
 
             while (_working)
             {
-                var rnd = new Randomizer().Number(4);
-
-                ArrayList checkNum  = new ArrayList();
-                ArrayList form = new ArrayList();
-                ArrayList balance = new ArrayList();
-                ArrayList currency = new ArrayList(); 
-
-                User usData = new User();
-                Check chData = new Check();
-                var user = UserData.Generate(1);
-                var check = CheckData.Generate(rnd);
-
-                foreach (var item in check)
+                for (int i = 0; i < settings.MaxNewUser; i++)
                 {
-                    chData = item;
-                    checkNum.Add(chData.CheckNum);
-                    form.Add(checkForm[chData.Form]);
-                    balance.Add(chData.Balance);
-                    if (checkForm[chData.Form] == "Валютный")
-                        currency.Add(checkCurrencyVal[chData.Currency]);
-                    else
-                        currency.Add(checkCurrencyRub);
+                    var rnd = new Randomizer().Number(4);
 
-                }
+                    ArrayList checkNum = new ArrayList();
+                    ArrayList form = new ArrayList();
+                    ArrayList balance = new ArrayList();
+                    ArrayList currency = new ArrayList();
 
-                foreach (var item in user)
-                {
-                    usData = item;
-                }
+                    User usData = new User();
+                    Check chData = new Check();
+                    var user = UserData.Generate(1);
+                    var check = CheckData.Generate(rnd);
 
-                sqlfunc.RegUser(usData.Id, usData.Login, usData.Password, usData.FirstName, usData.LastName, usData.PhoneNum);
-                sqlfunc.RegUserCheck(checkNum, form, balance, currency, usData.Id);
-                countReg += 1;
-                Console.WriteLine("Проход");
-                Thread.Sleep(10);
+                    foreach (var item in check)
+                    {
+                        chData = item;
+                        checkNum.Add(chData.CheckNum);
+                        form.Add(checkForm[chData.Form]);
+                        balance.Add(chData.Balance);
+                        if (checkForm[chData.Form] == "Валютный")
+                            currency.Add(checkCurrencyVal[chData.Currency]);
+                        else
+                            currency.Add(checkCurrencyRub);
 
-                
+                    }
+
+                    foreach (var item in user)
+                    {
+                        usData = item;
+                    }
+
+                    sqlfunc.RegUser(usData.Id, usData.Login, usData.Password, usData.FirstName, usData.LastName, usData.PhoneNum);
+                    sqlfunc.RegUserCheck(checkNum, form, balance, currency, usData.Id);
+                    countReg += 1;
+                    Console.WriteLine("Проход");
+                    Thread.Sleep(settings.DayInterval / settings.MaxNewUser);
+
+                }  
             } 
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-           
-            Start(checkedRB);   
-        }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            Stop();
-        }
 
 
         private void SimLoop()
@@ -188,16 +191,20 @@ namespace Eurotestament
                 {
 
                 }
-                label1.Invoke(new Action(() => label1.Text = date.ToString() + " Новыйх пользователей- " + countReg.ToString() + "Транзакций- " + countTrans.ToString()));
-                
+                labelNewClients.Invoke(new Action(() => labelNewClients.Text = countReg.ToString()));
+                labelNewTransaction.Invoke(new Action(() => labelNewTransaction.Text = countTrans.ToString()));
+                labelSumTransact.Invoke(new Action(() => labelSumTransact.Text = AllTransact.ToString("C")));
+                labelDate.Invoke(new Action(() => labelDate.Text = date.ToString("d")));
+
                 date = date.AddDays(1);
-                Thread.Sleep(1000);
+                Thread.Sleep(settings.DayInterval);
 
             }
         }
 
         private  void Start(string state)
         {
+   
 
             if (_working)
             {
@@ -205,7 +212,7 @@ namespace Eurotestament
                 return;
             }
 
-            
+            _working = true;
             if (state == "rbReg")
             {
                 Task.Run(() => SimLoop());
@@ -216,16 +223,19 @@ namespace Eurotestament
             {
                 Task.Run(() => SimLoop());
                 Task.Run(() => transaction());
-            }
                 
+            }
+
+            else if (state == "rbAll")
+            {
+                Task.Run(() => SimLoop());
+                Task.Run(() => registration());
+                Task.Run(() => transaction());
+
+            }
 
 
-
-
-
-            //await Task.Run(() => transaction());
-
-            _working = true;
+            
 
             label2.Text = "Симуляция запущена";
 
@@ -241,24 +251,44 @@ namespace Eurotestament
             }
 
             _working = false;
-
+            
             label2.Text = "Симуляция не работает!";
         }
 
-        private void rbReg_CheckedChanged(object sender, EventArgs e)
+
+        private void btnRefresh_Click(object sender, EventArgs e)
         {
-            checkedRB = rbReg.Name;
-            button1.Enabled = true;
-            button2.Enabled = true; 
+            labelNewClients.Invoke(new Action(() => labelNewClients.Text = countReg.ToString()));
+            labelNewTransaction.Invoke(new Action(() => labelNewTransaction.Text = countTrans.ToString()));
+            labelSumTransact.Invoke(new Action(() => labelSumTransact.Text = AllTransact.ToString("C")));
+            labelDate.Invoke(new Action(() => labelDate.Text = date.ToString("d")));
         }
 
-        private void rbTrans_CheckedChanged(object sender, EventArgs e)
+        private void radioButton_CheckedChanged(object sender, EventArgs e)
         {
-            checkedRB = rbTrans.Name;
-            button1.Enabled = true;
-            button2.Enabled = true;
+
+            RadioButton radioButton = (RadioButton)sender;
+            if (radioButton.Checked)
+            {
+                btnStart.Enabled = true;
+                btnStop.Enabled = true;
+                checkedRB = radioButton.Name;
+            }
         }
 
+        private void btnStart_Click(object sender, EventArgs e)
+        {
+            Start(checkedRB);
+        }
 
+        private void btnStop_Click(object sender, EventArgs e)
+        {
+            Stop();
+        }
+
+        private void labelDate_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

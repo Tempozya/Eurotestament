@@ -20,5 +20,16 @@ namespace SqlConn
             return DBMySQLUtils.GetDBConnection(host, port, database, username, password);
         }
 
+
+        public static string GetDBString()
+        {
+            string host = "c9113991.beget.tech";
+            int port = 3306;
+            string database = "c9113991_et";
+            string username = "c9113991_et";
+            string password = "Xaker1415";
+
+            return DBMySQLUtils.GetDBString(host, port, database, username, password);
+        }
     }
 }

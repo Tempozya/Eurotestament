@@ -21,5 +21,16 @@ namespace SqlConn
             return conn;
         }
 
+        public static string GetDBString(string host, int port, string database, string username, string password)
+        {
+            // Connection String.
+            String connString = "Server=" + host + ";Database=" + database
+                + ";port=" + port + ";User Id=" + username + ";password=" + password;
+
+           
+
+            return connString;
+        }
+
     }
 }

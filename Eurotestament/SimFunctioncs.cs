@@ -55,7 +55,7 @@ namespace Eurotestament
             .RuleFor(u => u.Id, f => f.Finance.Account(8))
             .RuleFor(u => u.FirstName, f => f.Name.FirstName())
             .RuleFor(u => u.LastName, f => f.Name.LastName())
-            .RuleFor(u => u.Login, (f, u) => f.Internet.UserName(u.FirstName, u.LastName))
+            .RuleFor(u => u.Login, (f, u) => f.Internet.UserName(u.FirstName, u.LastName)+ f.Finance.Account(5))
             .RuleFor(u => u.Password, f => f.Internet.Password())
             .RuleFor(u => u.PhoneNum, f => f.Phone.PhoneNumber())
             .FinishWith((f, u) => { });

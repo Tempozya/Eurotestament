@@ -12,6 +12,7 @@ using System.Data.Common;
 using Bogus.DataSets;
 using Bogus.Extensions.UnitedKingdom;
 using Bogus;
+using System.Diagnostics;
 
 namespace Eurotestament
 {
@@ -20,27 +21,24 @@ namespace Eurotestament
         MySqlConnection conn = DBUtils.GetDBConnection();
 
 
-        public bool LoginUser(string login, string password) 
+        public bool LoginUser(string login, string password)
         {
             bool flag = false;
-            
+
 
             string sql = String.Format("SELECT * FROM users WHERE login = @uL AND pass = @uP;");
             DataTable table = new DataTable();
-            MySqlDataAdapter adapter = new MySqlDataAdapter();
             MySqlCommand command = new MySqlCommand(sql, conn);
             command.Parameters.Add("@uL", MySqlDbType.VarChar).Value = login;
             command.Parameters.Add("@uP", MySqlDbType.VarChar).Value = password;
-
             conn.Open();
-            adapter.SelectCommand = command;
-            adapter.Fill(table);
+            MySqlDataReader sqldr = command.ExecuteReader();
 
-            if (table.Rows.Count > 0)
+            if (sqldr.HasRows)
                 flag = true;
 
-
             conn.Close();
+
             return flag;
         }
 
@@ -59,15 +57,17 @@ namespace Eurotestament
             command.Parameters.Add("@uP", MySqlDbType.VarChar).Value = password;
 
             conn.Open();
-            adapter.SelectCommand = command;
-            adapter.Fill(table);
+            MySqlDataReader sqldr = command.ExecuteReader();
 
-
-            if (table.Rows.Count > 0)
+            if (sqldr.HasRows)
                 flag = true;
 
-
             conn.Close();
+
+
+
+
+
             return flag;
         }
 
@@ -80,73 +80,91 @@ namespace Eurotestament
 
             string sql = String.Format("INSERT INTO users(id,login,pass,name,surname,phone) VALUES (@uId,@uLogin, @uPass, @uName, @uSurname,@uPhone)");
 
-            
-            MySqlCommand command = new MySqlCommand(sql, conn);
-            command.Parameters.Add("@uId", MySqlDbType.VarChar).Value = uId;
-            command.Parameters.Add("@uLogin", MySqlDbType.VarChar).Value = login;
-            command.Parameters.Add("@uPass", MySqlDbType.VarChar).Value = password;
-            command.Parameters.Add("@uName", MySqlDbType.VarChar).Value = name;
-            command.Parameters.Add("@uSurname", MySqlDbType.VarChar).Value = surname;
-            command.Parameters.Add("@uPhone", MySqlDbType.VarChar).Value = phone;
-
-            conn.Open();
-
-            if (command.ExecuteNonQuery() == 1)
+            try
             {
-                flag = true;
+                MySqlCommand command = new MySqlCommand(sql, conn);
+                command.Parameters.Add("@uId", MySqlDbType.VarChar).Value = uId;
+                command.Parameters.Add("@uLogin", MySqlDbType.VarChar).Value = login;
+                command.Parameters.Add("@uPass", MySqlDbType.VarChar).Value = password;
+                command.Parameters.Add("@uName", MySqlDbType.VarChar).Value = name;
+                command.Parameters.Add("@uSurname", MySqlDbType.VarChar).Value = surname;
+                command.Parameters.Add("@uPhone", MySqlDbType.VarChar).Value = phone;
+
+                conn.Open();
+
+                if (command.ExecuteNonQuery() == 1)
+                {
+                    flag = true;
+
+                }
+            }
+            finally
+            {
+                conn.Close();
             }
 
-            conn.Close();
+
             return flag;
         }
 
         public bool RegUser(string id, string login, string password, string name, string surname, string phone)
         {
-            bool flag = false;
-
-
-            string sql = String.Format("INSERT INTO users(id,login,pass,name,surname,phone) VALUES (@uId,@uLogin, @uPass, @uName, @uSurname,@uPhone)");
-
-
-            MySqlCommand command = new MySqlCommand(sql, conn);
-            command.Parameters.Add("@uId", MySqlDbType.VarChar).Value = id;
-            command.Parameters.Add("@uLogin", MySqlDbType.VarChar).Value = login;
-            command.Parameters.Add("@uPass", MySqlDbType.VarChar).Value = password;
-            command.Parameters.Add("@uName", MySqlDbType.VarChar).Value = name;
-            command.Parameters.Add("@uSurname", MySqlDbType.VarChar).Value = surname;
-            command.Parameters.Add("@uPhone", MySqlDbType.VarChar).Value = phone;
-
-            conn.Open();
-
-            if (command.ExecuteNonQuery() == 1)
+            using (var connect = new MySqlConnection(DBUtils.GetDBString()))
             {
-                flag = true;
-            }
+                bool flag = false;
 
-            conn.Close();
-            return flag;
+
+                string sql = String.Format("INSERT INTO users(id,login,pass,name,surname,phone) VALUES (@uId,@uLogin, @uPass, @uName, @uSurname,@uPhone)");
+
+                MySqlCommand command = new MySqlCommand(sql, connect);
+                command.Parameters.Add("@uId", MySqlDbType.VarChar).Value = id;
+                command.Parameters.Add("@uLogin", MySqlDbType.VarChar).Value = login;
+                command.Parameters.Add("@uPass", MySqlDbType.VarChar).Value = password;
+                command.Parameters.Add("@uName", MySqlDbType.VarChar).Value = name;
+                command.Parameters.Add("@uSurname", MySqlDbType.VarChar).Value = surname;
+                command.Parameters.Add("@uPhone", MySqlDbType.VarChar).Value = phone;
+
+
+
+                connect.Open();
+
+
+                if (command.ExecuteNonQuery() == 1)
+                {
+                    flag = true;
+                    connect.Close();
+
+                }
+
+            
+
+
+                 return flag;
+            }
         }
 
 
         public void RegUserCheck(ArrayList num, ArrayList form, ArrayList balance, ArrayList currency, string client)
         {
-   
-            conn.Open();
-
-            for (int i = 0; i < num.Count; i++)
+            using (var connect = new MySqlConnection(DBUtils.GetDBString()))
             {
-                string sql = String.Format("INSERT INTO checks(num,form,balance,currency,client) VALUES (@num,@form, @balance, @currency, @client)");
+                connect.Open();
 
-                MySqlCommand command = new MySqlCommand(sql, conn);
-                command.Parameters.Add("@num", MySqlDbType.VarChar).Value = num[i];
-                command.Parameters.Add("@form", MySqlDbType.VarChar).Value = form[i];
-                command.Parameters.Add("@balance", MySqlDbType.VarChar).Value = balance[i].ToString();
-                command.Parameters.Add("@currency", MySqlDbType.VarChar).Value = currency[i];
-                command.Parameters.Add("@client", MySqlDbType.VarChar).Value = client;
-                command.ExecuteNonQuery();
+                for (int i = 0; i < num.Count; i++)
+                {
+                    string sql = String.Format("INSERT INTO checks(num,form,balance,currency,client) VALUES (@num,@form, @balance, @currency, @client)");
+
+                    MySqlCommand command = new MySqlCommand(sql, connect);
+                    command.Parameters.Add("@num", MySqlDbType.VarChar).Value = num[i];
+                    command.Parameters.Add("@form", MySqlDbType.VarChar).Value = form[i];
+                    command.Parameters.Add("@balance", MySqlDbType.VarChar).Value = balance[i].ToString();
+                    command.Parameters.Add("@currency", MySqlDbType.VarChar).Value = currency[i];
+                    command.Parameters.Add("@client", MySqlDbType.VarChar).Value = client;
+                    command.ExecuteNonQuery();
+                }
+
+                connect.Close();
             }
-
-            conn.Close();
         }
 
 
@@ -165,6 +183,7 @@ namespace Eurotestament
                 {
                     foreach (DbDataRecord result in sqldr)
                         allclients.Add(result);
+                    conn.Close();
                 }
             }
             catch (Exception e)
@@ -172,22 +191,27 @@ namespace Eurotestament
                 MessageBox.Show(e.Message);
                 Application.ExitThread();
             }
-            conn.Close();
+            
             return allclients;
         }
 
         public DataTable AllChecksSimulat()
         {
-            DataTable data = new DataTable();
-            data.Clear();
-            conn.Open();
+            using (var connect = new MySqlConnection(DBUtils.GetDBString()))
+            {
+                DataTable data = new DataTable();
+                data.Clear();
 
-            string sql = String.Format("SELECT * FROM checks ");
-            MySqlCommand command = new MySqlCommand(sql, conn);
-            MySqlDataReader sqldr = command.ExecuteReader();
-            data.Load(sqldr);
-            conn.Close();
-            return data;
+                connect.Open();
+
+                string sql = String.Format("SELECT * FROM checks");
+                MySqlCommand command = new MySqlCommand(sql, connect);
+                MySqlDataReader sqldr = command.ExecuteReader();
+
+                data.Load(sqldr);
+                connect.Close();
+                return data;
+            }
         }
 
         public ArrayList AllChecks(string userLogin)
@@ -205,10 +229,11 @@ namespace Eurotestament
             {
                 foreach (DbDataRecord result in sqldr)
                     allchecks.Add(result);
+                conn.Close();
             }
 
 
-            conn.Close();
+            
             return allchecks;
         }
 
@@ -235,6 +260,7 @@ namespace Eurotestament
                 {
                     foreach (DbDataRecord result in sqldr)
                         allclientssearch.Add(result);
+                    conn.Close();
                 }
             }
             catch (Exception e)
@@ -242,7 +268,7 @@ namespace Eurotestament
                 MessageBox.Show(e.Message);
                 Application.ExitThread();
             }
-            conn.Close();
+            
             return allclientssearch;
         }
 
@@ -267,6 +293,7 @@ namespace Eurotestament
                 if (command.ExecuteNonQuery() == 1)
                 {
                     flag = true;
+                    conn.Close();
                 }
             }
             catch (Exception e)
@@ -274,7 +301,7 @@ namespace Eurotestament
                 MessageBox.Show(e.Message);
                 Application.ExitThread();
             }
-            conn.Close();
+            
             return flag;
         }
 
@@ -293,6 +320,7 @@ namespace Eurotestament
                 if (command.ExecuteNonQuery() == 1)
                 {
                     flag = true;
+                    conn.Close();
                 }
             }
             catch (MySqlException)
@@ -304,7 +332,7 @@ namespace Eurotestament
                 MessageBox.Show(e.Message);
                 Application.ExitThread();
             }
-            conn.Close();
+            
             return flag;
         }
 
@@ -324,10 +352,11 @@ namespace Eurotestament
             {
                 foreach (DbDataRecord result in sqldr)
                     allchecks.Add(result);
+                conn.Close();
             }
 
 
-            conn.Close();
+           
             return allchecks;
         }
 
@@ -366,7 +395,7 @@ namespace Eurotestament
             else
                 MessageBox.Show("Неверная сумма перевода");
 
-            conn.Close();
+            
             return flag;
 
         }
@@ -395,108 +424,121 @@ namespace Eurotestament
 
         public bool MoneyTransfer(string UserNumCheck, string RecipientNumCheck, string SumWriteOff, string SumCrediting, string uCurrency, string rCurrency, string rBank)
         {
-            bool flag = false;
-            string comission = "0";
-            string total_comission = SumWriteOff;
-
-            if (rBank != "0")
+            using (var connect = new MySqlConnection(DBUtils.GetDBString()))
             {
-                total_comission = ComissionBank("0", SumWriteOff);
-                comission = (Convert.ToDouble(total_comission) - Convert.ToDouble(SumWriteOff)).ToString();
+                bool flag = false;
+                string comission = "0";
+                string total_comission = SumWriteOff;
 
-            } 
-
-
-            conn.Open();
-            
-
-            string SqlUpdateUser = String.Format("update checks set balance = balance - @SumWriteOff  where num = @uNum");
-            string SqlUpdateRecipient = String.Format("update checks set balance = balance + @SumCrediting  where num = @rNum");
-            string SqlSendComission = String.Format("update banks_checks set balance = balance + @comissions  where id = @bankSender");
-
-            MySqlCommand CommandUpdateUser = new MySqlCommand(SqlUpdateUser, conn);
-            MySqlCommand CommandUpdateRecipient = new MySqlCommand(SqlUpdateRecipient, conn);
-            MySqlCommand CommandSendComission = new MySqlCommand(SqlSendComission, conn);
-
-            CommandUpdateUser.Parameters.Add("@SumWriteOff", MySqlDbType.VarChar).Value = total_comission;
-            CommandUpdateUser.Parameters.Add("@uNum", MySqlDbType.VarChar).Value = UserNumCheck;
-
-            CommandUpdateRecipient.Parameters.Add("@SumCrediting", MySqlDbType.VarChar).Value = SumCrediting;
-            CommandUpdateRecipient.Parameters.Add("@rNum", MySqlDbType.VarChar).Value = RecipientNumCheck;
-            CommandUpdateRecipient.Parameters.Add("@comission", MySqlDbType.VarChar).Value = comission;
-
-            CommandSendComission.Parameters.Add("@comissions", MySqlDbType.VarChar).Value = comission;
-            CommandSendComission.Parameters.Add("@bankSender", MySqlDbType.VarChar).Value = 0;
-
-
-          
-
-            try
-            {
-                if (CommandUpdateUser.ExecuteNonQuery() == 1 && CommandUpdateRecipient.ExecuteNonQuery() == 1 && CommandSendComission.ExecuteNonQuery() == 1)
+                if (rBank != "0")
                 {
-                    
-                    if (CreateTransaction(UserNumCheck, RecipientNumCheck, total_comission, SumCrediting, uCurrency, rCurrency,  rBank,  comission, conn))
-                        flag = true;
+                    total_comission = ComissionBank("0", SumWriteOff);
+                    comission = (Convert.ToDouble(total_comission) - Convert.ToDouble(SumWriteOff)).ToString();
+
                 }
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show("Начало Транзакции");
-                MessageBox.Show(e.Message);
-                Application.ExitThread();
-            }
-            conn.Close();
 
 
-            return flag;
+                connect.Open();
+
+
+                string SqlUpdateUser = String.Format("update checks set balance = balance - @SumWriteOff  where num = @uNum");
+                string SqlUpdateRecipient = String.Format("update checks set balance = balance + @SumCrediting  where num = @rNum");
+                string SqlSendComission = String.Format("update banks_checks set balance = balance + @comissions  where id = @bankSender");
+
+                MySqlCommand CommandUpdateUser = new MySqlCommand(SqlUpdateUser, connect);
+                MySqlCommand CommandUpdateRecipient = new MySqlCommand(SqlUpdateRecipient, connect);
+                MySqlCommand CommandSendComission = new MySqlCommand(SqlSendComission, connect);
+
+                CommandUpdateUser.Parameters.Add("@SumWriteOff", MySqlDbType.VarChar).Value = total_comission;
+                CommandUpdateUser.Parameters.Add("@uNum", MySqlDbType.VarChar).Value = UserNumCheck;
+
+                CommandUpdateRecipient.Parameters.Add("@SumCrediting", MySqlDbType.VarChar).Value = SumCrediting;
+                CommandUpdateRecipient.Parameters.Add("@rNum", MySqlDbType.VarChar).Value = RecipientNumCheck;
+                CommandUpdateRecipient.Parameters.Add("@comission", MySqlDbType.VarChar).Value = comission;
+
+                CommandSendComission.Parameters.Add("@comissions", MySqlDbType.VarChar).Value = comission;
+                CommandSendComission.Parameters.Add("@bankSender", MySqlDbType.VarChar).Value = 0;
+
+
+
+
+                try
+                {
+                    if (CommandUpdateUser.ExecuteNonQuery() == 1 && CommandUpdateRecipient.ExecuteNonQuery() == 1 && CommandSendComission.ExecuteNonQuery() == 1)
+                    {
+
+                        if (CreateTransaction(UserNumCheck, RecipientNumCheck, total_comission, SumCrediting, uCurrency, rCurrency, rBank, comission, connect))
+                            flag = true;
+
+                    }
+                }
+                catch (Exception e)
+                {
+
+                    MessageBox.Show(e.Message);
+                    Application.ExitThread();
+                }
+                finally
+                {
+                    connect.Close();
+                }
+
+
+
+                return flag;
+            }
         }
 
 
 
         public bool CreateTransaction(string UserNumCheck, string RecipientNumCheck, string SumWriteOff, string SumCrediting, string uCurrency, string rCurrency, string rBank, string comission, MySqlConnection conn)
         {
-            bool flag = false;
-            var f = new Faker();
-            var date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-            var TransIdentif = f.Random.Hash();
-
-
-            string sql = String.Format(
-                "INSERT INTO transaction(trans_identif,UserNumCheck,RecipientNumCheck,Sum_transaction,Sum_transaction_currency,Sum_enrollment,bank_recipient,Sum_enrollment_currency,date_transaction,comission) " +
-                "VALUES (@tID,@uNum, @rNum, @tSum,@tCurr,@eSum,@rBank,@eCurr, @uDate,@comission)");
-
-
-            MySqlCommand command = new MySqlCommand(sql, conn);
-            command.Parameters.Add("@tID", MySqlDbType.VarChar).Value = TransIdentif;
-            command.Parameters.Add("@uNum", MySqlDbType.VarChar).Value = UserNumCheck;
-            command.Parameters.Add("@rNum", MySqlDbType.VarChar).Value = RecipientNumCheck;
-            command.Parameters.Add("@tSum", MySqlDbType.VarChar).Value = SumWriteOff;
-            command.Parameters.Add("@tCurr", MySqlDbType.VarChar).Value = uCurrency;
-            command.Parameters.Add("@eSum", MySqlDbType.VarChar).Value = SumCrediting;
-            command.Parameters.Add("@eCurr", MySqlDbType.VarChar).Value = rCurrency;
-            command.Parameters.Add("@uDate", MySqlDbType.VarChar).Value = date;
-            command.Parameters.Add("@rBank", MySqlDbType.VarChar).Value = rBank;
-            command.Parameters.Add("@comission", MySqlDbType.VarChar).Value = comission;
-            
-
-
-
-
-            try
+            using (var connect = new MySqlConnection(DBUtils.GetDBString()))
             {
-                if (command.ExecuteNonQuery() == 1)
+                connect.Open();
+                bool flag = false;
+                var f = new Faker();
+                var date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                var TransIdentif = f.Random.Hash();
+
+
+                string sql = String.Format(
+                    "INSERT INTO transaction(trans_identif,UserNumCheck,RecipientNumCheck,Sum_transaction,Sum_transaction_currency,Sum_enrollment,bank_recipient,Sum_enrollment_currency,date_transaction,comission) " +
+                    "VALUES (@tID,@uNum, @rNum, @tSum,@tCurr,@eSum,@rBank,@eCurr, @uDate,@comission)");
+
+
+                MySqlCommand command = new MySqlCommand(sql, connect);
+                command.Parameters.Add("@tID", MySqlDbType.VarChar).Value = TransIdentif;
+                command.Parameters.Add("@uNum", MySqlDbType.VarChar).Value = UserNumCheck;
+                command.Parameters.Add("@rNum", MySqlDbType.VarChar).Value = RecipientNumCheck;
+                command.Parameters.Add("@tSum", MySqlDbType.VarChar).Value = SumWriteOff;
+                command.Parameters.Add("@tCurr", MySqlDbType.VarChar).Value = uCurrency;
+                command.Parameters.Add("@eSum", MySqlDbType.VarChar).Value = SumCrediting;
+                command.Parameters.Add("@eCurr", MySqlDbType.VarChar).Value = rCurrency;
+                command.Parameters.Add("@uDate", MySqlDbType.VarChar).Value = date;
+                command.Parameters.Add("@rBank", MySqlDbType.VarChar).Value = rBank;
+                command.Parameters.Add("@comission", MySqlDbType.VarChar).Value = comission;
+
+
+
+
+
+                try
                 {
-                    flag = true;
+                    if (command.ExecuteNonQuery() == 1)
+                    {
+                        flag = true;
+                        connect.Close();
+                    }
                 }
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.Message);
-                Application.ExitThread();
-            }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.Message);
+                    Application.ExitThread();
+                }
 
-            return flag;
+                return flag;
+            }
         }
 
         public DataTable GetClient(string login) 
