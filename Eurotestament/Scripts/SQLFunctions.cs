@@ -343,6 +343,7 @@ namespace Eurotestament
 
             conn.Open();
 
+            
             string sql = String.Format("SELECT num,form,balance,currency  FROM checks WHERE client = @uID ");
             MySqlCommand command = new MySqlCommand(sql, conn);
             command.Parameters.Add("@uID", MySqlDbType.VarChar).Value = userId;
@@ -658,7 +659,44 @@ namespace Eurotestament
         }
 
 
+        public string CountUser()
+        {
+            string count;
+            string sql = String.Format("SELECT count(id)  FROM users");
+            MySqlCommand command = new MySqlCommand(sql, conn);
+            conn.Open();
+            count = command.ExecuteScalar().ToString();
 
+
+            conn.Close();   
+            return count;
+        }
+
+        public string CountTransaction()
+        {
+            string count;
+            string sql = String.Format("SELECT count(id)  FROM transaction");
+            MySqlCommand command = new MySqlCommand(sql, conn);
+            conn.Open();
+            count = command.ExecuteScalar().ToString();
+
+
+            conn.Close();
+            return count;
+        }
+
+        public double GetComission()
+        {
+            double count;
+            string sql = String.Format("SELECT balance  FROM banks_checks");
+            MySqlCommand command = new MySqlCommand(sql, conn);
+            conn.Open();
+            count = Convert.ToDouble(command.ExecuteScalar());
+
+
+            conn.Close();
+            return count;
+        }
 
 
     }

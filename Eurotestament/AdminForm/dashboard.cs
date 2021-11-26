@@ -12,15 +12,18 @@ namespace Eurotestament
 {
     public partial class dashboard : Form
     {
+        SQLFunctions sqlfunc = new SQLFunctions();
         public dashboard()
         {
             InitializeComponent();
            
         }
 
-        private void panelUserCount_Paint(object sender, PaintEventArgs e)
+        private void dashboard_Load(object sender, EventArgs e)
         {
-
+            labelCount.Text = sqlfunc.CountUser();
+            labelTrans.Text = sqlfunc.CountTransaction();
+            labelComis.Text = sqlfunc.GetComission().ToString("C");
         }
     }
 }
