@@ -18,7 +18,7 @@ namespace Eurotestament
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FlatMainForm());
+            Application.Run(new Login());
 
         }
     }

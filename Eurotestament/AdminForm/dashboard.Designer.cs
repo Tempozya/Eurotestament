@@ -29,6 +29,7 @@ namespace Eurotestament
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(dashboard));
             this.panelUserCount = new System.Windows.Forms.Panel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -42,6 +43,10 @@ namespace Eurotestament
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.labelComis = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
+            this.dtpStart = new System.Windows.Forms.DateTimePicker();
+            this.dtpEnd = new System.Windows.Forms.DateTimePicker();
+            this.zedGraph = new ZedGraph.ZedGraphControl();
+            this.btnRefresh = new Eurotestament.DesignControls.ButtonControl();
             this.panelUserCount.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panel1.SuspendLayout();
@@ -77,11 +82,12 @@ namespace Eurotestament
             this.labelCount.AutoSize = true;
             this.labelCount.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.labelCount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(47)))), ((int)(((byte)(152)))), ((int)(((byte)(226)))));
-            this.labelCount.Location = new System.Drawing.Point(56, 88);
+            this.labelCount.Location = new System.Drawing.Point(42, 88);
             this.labelCount.Name = "labelCount";
             this.labelCount.Size = new System.Drawing.Size(16, 17);
             this.labelCount.TabIndex = 3;
             this.labelCount.Text = "1";
+            this.labelCount.Click += new System.EventHandler(this.labelCount_Click);
             // 
             // label1
             // 
@@ -122,7 +128,7 @@ namespace Eurotestament
             this.labelTrans.AutoSize = true;
             this.labelTrans.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.labelTrans.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(67)))), ((int)(((byte)(201)))), ((int)(((byte)(54)))));
-            this.labelTrans.Location = new System.Drawing.Point(60, 88);
+            this.labelTrans.Location = new System.Drawing.Point(48, 88);
             this.labelTrans.Name = "labelTrans";
             this.labelTrans.Size = new System.Drawing.Size(16, 17);
             this.labelTrans.TabIndex = 3;
@@ -167,7 +173,7 @@ namespace Eurotestament
             this.labelComis.AutoSize = true;
             this.labelComis.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.labelComis.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(214)))), ((int)(((byte)(212)))), ((int)(((byte)(56)))));
-            this.labelComis.Location = new System.Drawing.Point(67, 88);
+            this.labelComis.Location = new System.Drawing.Point(50, 88);
             this.labelComis.Name = "labelComis";
             this.labelComis.Size = new System.Drawing.Size(16, 17);
             this.labelComis.TabIndex = 3;
@@ -185,12 +191,68 @@ namespace Eurotestament
             this.label6.TabIndex = 2;
             this.label6.Text = "Коммисия";
             // 
+            // dtpStart
+            // 
+            this.dtpStart.CustomFormat = "yyyy-MM-dd";
+            this.dtpStart.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.dtpStart.Location = new System.Drawing.Point(636, 370);
+            this.dtpStart.Name = "dtpStart";
+            this.dtpStart.Size = new System.Drawing.Size(87, 20);
+            this.dtpStart.TabIndex = 7;
+            // 
+            // dtpEnd
+            // 
+            this.dtpEnd.CustomFormat = "yyyy-MM-dd";
+            this.dtpEnd.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.dtpEnd.Location = new System.Drawing.Point(777, 370);
+            this.dtpEnd.Name = "dtpEnd";
+            this.dtpEnd.Size = new System.Drawing.Size(87, 20);
+            this.dtpEnd.TabIndex = 8;
+            // 
+            // zedGraph
+            // 
+            this.zedGraph.Location = new System.Drawing.Point(12, 221);
+            this.zedGraph.Name = "zedGraph";
+            this.zedGraph.ScrollGrace = 0D;
+            this.zedGraph.ScrollMaxX = 0D;
+            this.zedGraph.ScrollMaxY = 0D;
+            this.zedGraph.ScrollMaxY2 = 0D;
+            this.zedGraph.ScrollMinX = 0D;
+            this.zedGraph.ScrollMinY = 0D;
+            this.zedGraph.ScrollMinY2 = 0D;
+            this.zedGraph.Size = new System.Drawing.Size(618, 360);
+            this.zedGraph.TabIndex = 10;
+            this.zedGraph.UseExtendedPrintDialog = true;
+            // 
+            // btnRefresh
+            // 
+            this.btnRefresh.BackColor = System.Drawing.Color.MediumSlateBlue;
+            this.btnRefresh.BackgroundColor = System.Drawing.Color.MediumSlateBlue;
+            this.btnRefresh.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.btnRefresh.BorderRadius = 20;
+            this.btnRefresh.BorderSize = 0;
+            this.btnRefresh.FlatAppearance.BorderSize = 0;
+            this.btnRefresh.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnRefresh.ForeColor = System.Drawing.Color.White;
+            this.btnRefresh.Location = new System.Drawing.Point(681, 420);
+            this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.Size = new System.Drawing.Size(150, 40);
+            this.btnRefresh.TabIndex = 9;
+            this.btnRefresh.Text = "Отобразить";
+            this.btnRefresh.TextColor = System.Drawing.Color.White;
+            this.btnRefresh.UseVisualStyleBackColor = false;
+            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
+            // 
             // dashboard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(41)))), ((int)(((byte)(53)))), ((int)(((byte)(65)))));
-            this.ClientSize = new System.Drawing.Size(674, 450);
+            this.ClientSize = new System.Drawing.Size(955, 593);
+            this.Controls.Add(this.zedGraph);
+            this.Controls.Add(this.btnRefresh);
+            this.Controls.Add(this.dtpEnd);
+            this.Controls.Add(this.dtpStart);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.panelUserCount);
@@ -224,5 +286,9 @@ namespace Eurotestament
         private System.Windows.Forms.PictureBox pictureBox3;
         private System.Windows.Forms.Label labelComis;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.DateTimePicker dtpStart;
+        private System.Windows.Forms.DateTimePicker dtpEnd;
+        private DesignControls.ButtonControl btnRefresh;
+        private ZedGraph.ZedGraphControl zedGraph;
     }
 }

@@ -698,6 +698,55 @@ namespace Eurotestament
             return count;
         }
 
+        public DataTable GetTransactionPeriod(string dataStart, string dataEnd)
+        {
+            DataTable data = new DataTable();
+            data.Clear(); 
+            string sql = String.Format("SELECT COUNT(*), DATE(date_transaction) AS mydate FROM transaction WHERE (date_transaction BETWEEN @dataStart AND @dataEnd) GROUP BY mydate ");
+            MySqlCommand command = new MySqlCommand(sql, conn);
+            command.Parameters.Add("@dataStart", MySqlDbType.VarChar).Value = dataStart;
+            command.Parameters.Add("@dataEnd", MySqlDbType.VarChar).Value = dataEnd;
+            conn.Open();    
+            MySqlDataReader sqldr = command.ExecuteReader();
+            data.Load(sqldr);
+
+
+            conn.Close();
+            return data;
+        }
+
+
+
+        public List<string[]> GetAllHistory()
+        {
+            List<string[]> data = new List<string[]>();
+            conn.Open();
+
+            string sql = String.Format("SELECT * FROM transaction");
+            MySqlCommand command = new MySqlCommand(sql, conn);
+            MySqlDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                data.Add(new string[12]);
+
+                data[data.Count - 1][0] = reader[0].ToString();
+                data[data.Count - 1][1] = reader[1].ToString();
+                data[data.Count - 1][2] = reader[2].ToString();
+                data[data.Count - 1][3] = reader[3].ToString();
+                data[data.Count - 1][4] = reader[4].ToString();
+                data[data.Count - 1][5] = reader[5].ToString();
+                data[data.Count - 1][6] = reader[6].ToString();
+                data[data.Count - 1][7] = reader[7].ToString();
+                data[data.Count - 1][8] = reader[8].ToString();
+                data[data.Count - 1][9] = reader[9].ToString();
+                data[data.Count - 1][10] = reader[10].ToString();
+                data[data.Count - 1][11] = reader[11].ToString();
+
+            }
+            conn.Close();
+            return data;
+        }
+
 
     }
 }
